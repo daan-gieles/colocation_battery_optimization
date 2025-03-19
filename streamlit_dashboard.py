@@ -4,7 +4,7 @@ import optimization
 def main():
     st.title('Optimization of co-located 1MW solar plant with a 1MWh battery')
     
-    max_power = st.slider(label="Maximum absolute power limit [MW]",min_value=0.0,max_value=0.5,step=0.05)
+    max_power = st.slider(label="Maximum absolute power limit [MW]",min_value=0.0,max_value=1,step=0.05)
     starting_soc = st.slider(label="Starting SOC [MWh]",min_value=0.0,max_value=1.0,step=0.05)
     click = st.button('Run optimization')
     if click:
