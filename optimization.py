@@ -37,7 +37,7 @@ def run_single_optimization(starting_soc = 0.1, p_limit = 0.1):
 
     def soc_calculation(model,t):
         preceding_t = [ts for ts in model.t if ts<=t]
-        return np.sum([model.p[t] for t in preceding_t])
+        return np.sum([model.p[t] for t in preceding_t])/4
 
     def constraint_p_max(model,t):
         return model.p[t]<=p_limit
