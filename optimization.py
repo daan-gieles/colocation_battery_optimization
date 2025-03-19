@@ -6,29 +6,6 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 
-def p_pv_to_battery_calculation(model,t):
-    return model.pv[t] - model.p[t]
-
-
-def soc_calculation(model,t):
-    preceding_t = [ts for ts in model.t if ts<=t]
-    return np.sum([model.p[t] for t in preceding_t])
-
-def constraint_p_max(model,t):
-    return model.p[t]<=0.1
-
-def constraint_p_min(model,t):
-    return model.p[t]>=-0.1
-
-def constraint_soc_lower(model,t):
-    return model.soc[t]>=0
-
-def constraint_soc_upper(model,t):
-    return model.soc[t]<=1
-# def constraint_etp(model):
-    
-#     return (sum(model.p[t] for t in model.t if model.p[t]<0)<=-5)
-
 def run_single_optimization(starting_soc = 0.1, p_limit = 0.1):
 
     def p_pv_to_battery_calculation(model,t):
@@ -37,7 +14,7 @@ def run_single_optimization(starting_soc = 0.1, p_limit = 0.1):
 
     def soc_calculation(model,t):
         preceding_t = [ts for ts in model.t if ts<=t]
-        return np.sum([model.p[t] for t in preceding_t])/4
+        return starting_soc+ np.sum([model.p[t] for t in preceding_t])/4
 
     def constraint_p_max(model,t):
         return model.p[t]<=p_limit
