@@ -2,6 +2,5 @@ libglpk-dev
 glpk-utils
 locales-all
 pkg-config
-coinor-ipopt
 coinor-libipopt-dev
 coinor-libipopt1v5
