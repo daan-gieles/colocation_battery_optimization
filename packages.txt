@@ -1,3 +1,4 @@
 libglpk-dev 
 glpk-utils
 locales-all
+coinor-libipopt-dev
