@@ -67,7 +67,8 @@ def run_single_optimization(starting_soc = 0.1, p_limit = 0.1,date='2025-01-15',
     #Run optimization
     
     # opt = pyo.SolverFactory('cbc')
-    opt = pyo.SolverFactory('ipopt',executable='ipopt',solver_io='nl')
+    # opt = pyo.SolverFactory('ipopt',executable='ipopt',solver_io='nl')
+    opt = pyo.SolverFactory('glpk')
     # opt.options['output_file'] = "ipopt_log.txt"
     result = opt.solve(model)
     
@@ -111,7 +112,8 @@ def run_single_optimization(starting_soc = 0.1, p_limit = 0.1,date='2025-01-15',
 
 def objective_expression(model):
     
-    return sum(-model.da[t]*(model.p[t]-model.pv[t]) for t in model.t)-sum(model.p[t]**2 for t in model.t)*ETP_COST/4
+    # return sum(-model.da[t]*(model.p[t]-model.pv[t]) for t in model.t)-sum(model.p[t]**2 for t in model.t)*ETP_COST/4
+    return sum(-model.da[t]*(model.p[t]-model.pv[t]) for t in model.t)
 
 # 
 if __name__ == "__main__":
