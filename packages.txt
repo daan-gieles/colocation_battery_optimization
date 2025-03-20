@@ -2,4 +2,12 @@ libglpk-dev
 glpk-utils
 locales-all
 pkg-config
+
+gcc
+g++
+gfortran
+git 
+cmake 
+liblapack-dev
+pkg-config
 coinor-libipopt-dev
