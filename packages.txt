@@ -2,12 +2,6 @@ libglpk-dev
 glpk-utils
 locales-all
 pkg-config
-swig
-gcc
-g++
-gfortran
-git 
-cmake 
-liblapack-dev
-pkg-config
+coinor-ipopt
 coinor-libipopt-dev
+coinor-libipopt1v5
