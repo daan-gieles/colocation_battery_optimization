@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/Ipopt/!svn/ver/2053/releases/3.10.1/Ipopt/examples/Cpp_example
+END
+MyNLP.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/Ipopt/!svn/ver/2053/releases/3.10.1/Ipopt/examples/Cpp_example/MyNLP.cpp
+END
+Makefile.in
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/Ipopt/!svn/ver/2053/releases/3.10.1/Ipopt/examples/Cpp_example/Makefile.in
+END
+MyNLP.hpp
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/Ipopt/!svn/ver/2053/releases/3.10.1/Ipopt/examples/Cpp_example/MyNLP.hpp
+END
+cpp_example.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/Ipopt/!svn/ver/2053/releases/3.10.1/Ipopt/examples/Cpp_example/cpp_example.cpp
+END

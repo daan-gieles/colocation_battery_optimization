@@ -1,0 +1,10 @@
+prefix=/usr/home/svigerske/nbBuildDir/Ipopt/releases-3.10.1-default
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+
+Name: Blas
+Description: Basic linear algebra package
+URL: https://projects.coin-or.org/BuildTools
+Version: 1.2.0
+Libs: -L${libdir} -lcoinblas 
+Cflags:
