@@ -67,9 +67,9 @@ def run_single_optimization(starting_soc = 0.1, p_limit = 0.1,date='2025-01-15',
     #Run optimization
     
     # opt = pyo.SolverFactory('cbc')
-    opt = pyo.SolverFactory('ipopt',executable='ipoptlinux.elf')
+    opt = pyo.SolverFactory('ipopt',executable='ipoptwindows.exe')
     # opt.options['output_file'] = "ipopt_log.txt"
-    result = opt.solve(model)    
+    result = opt.solve(model)
     
     ts_series =list(model.t.ordered_data())
     soc_series = [model.soc[ts]() for ts in ts_series]
