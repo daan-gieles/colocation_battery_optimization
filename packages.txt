@@ -2,7 +2,7 @@ libglpk-dev
 glpk-utils
 locales-all
 pkg-config
-
+swig
 gcc
 g++
 gfortran
