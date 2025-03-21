@@ -22,7 +22,7 @@ try:
         print("ipopt not found using 'which' command.")
 except Exception as e:
     print(f"Error occurred: {e}")
-    
+
 ETP_COST = 25
 
 def run_single_optimization(starting_soc = 0.1, p_limit = 0.1,date='2025-01-15',charge_from_grid=True):
