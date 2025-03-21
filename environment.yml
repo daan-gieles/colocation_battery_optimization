@@ -1,3 +1,0 @@
-name: ipopt_venv
-dependencies:
-  - ipopt=3.11.1
