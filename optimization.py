@@ -5,6 +5,24 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
+import shutil
+import subprocess
+
+# Check using shutil.which() to locate ipopt
+ipopt_path = shutil.which("ipopt")
+if ipopt_path:
+    print(f"ipopt is located at: {ipopt_path}")
+else:
+    print("ipopt executable not found.")
+try:
+    result = subprocess.run(['which', 'ipopt'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if result.returncode == 0:
+        print(f"ipopt is located at: {result.stdout.decode().strip()}")
+    else:
+        print("ipopt not found using 'which' command.")
+except Exception as e:
+    print(f"Error occurred: {e}")
+    
 ETP_COST = 25
 
 def run_single_optimization(starting_soc = 0.1, p_limit = 0.1,date='2025-01-15',charge_from_grid=True):
