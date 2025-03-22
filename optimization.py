@@ -70,7 +70,7 @@ def run_single_optimization(starting_soc = 0.1, p_limit = 0.1,date='2025-01-15',
     
     # opt = pyo.SolverFactory('cbc')
     # opt = pyo.SolverFactory('ipopt',executable='ipopt.exe',solver_io='nl')
-    opt = pyo.SolverFactory('ipopt')
+    opt = pyo.SolverFactory('ipopt',executable="/mount/src/colocation_battery_optimization/ipopt")
     # opt = pyo.SolverFactory('glpk')
     # opt.options['output_file'] = "ipopt_log.txt"
     result = opt.solve(model)
