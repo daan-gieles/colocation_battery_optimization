@@ -1,5 +1,6 @@
 import streamlit as st
 import optimization
+import os
 
 def main():
     st.title('Optimization of co-located 1MW solar plant with a 1MWh battery')
@@ -14,5 +15,10 @@ def main():
     if click:
         fig = optimization.run_single_optimization(starting_soc=starting_soc,p_limit=max_power,charge_from_grid=charge_from_grid,date=date.strftime('%Y-%m-%d'))
         st.pyplot(fig)
+    
+    dir = st.text_input(label='mess around in directories on ST Cloud')
+    click_dir = st.button('Print contents of directory')
+    if click_dir:
+        st.text(str(os.listdir(dir)))
 if __name__== '__main__':
     main()
