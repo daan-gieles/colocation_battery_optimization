@@ -5,9 +5,53 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-ETP_COST = 25
 
-def run_single_optimization(starting_soc = 0.1, p_limit = 0.1,date='2025-01-15',charge_from_grid=True):
+
+def generate_output(starting_soc = 0.1, p_limit = 0.1,date='2025-01-15',charge_from_grid=True,etp_cost = 5):
+    model_colocation,result_colocation = run_single_optimization_colocation(starting_soc = starting_soc, p_limit = p_limit,date=date,charge_from_grid=charge_from_grid,etp_cost=etp_cost)
+    model_battery,result_battery = run_single_optimization_colocation(starting_soc = starting_soc, p_limit = p_limit,date=date,charge_from_grid=charge_from_grid,no_pv=True,etp_cost=etp_cost)
+    
+    #Generate plots
+    ts_series =list(model_colocation.t.ordered_data())
+    soc_series = [model_colocation.soc[ts]() for ts in ts_series]
+    pv_series = [model_colocation.pv[ts] for ts in ts_series]
+    p_series = [model_colocation.p[ts]() for ts in ts_series]
+    accumulated_pnl_series_colocation = np.cumsum([model_colocation.CF_colocation[ts]() for ts in ts_series])
+    accumulated_pnl_series_pv = np.cumsum([model_colocation.CF_pv[ts]() for ts in ts_series])
+    accumulated_pnl_series_battery_only =  np.cumsum([model_battery.CF_colocation[ts]() for ts in ts_series])
+    
+    da_prices_series = [model_colocation.da[ts] for ts in ts_series]
+
+    fig,(ax1,ax2,ax3) = plt.subplots(3,1,sharex=True)
+    
+    # ax1,ax2 = axes
+
+    ax1.plot(ts_series,soc_series,label='SOC')
+    ax1.plot(ts_series,pv_series,label='PV')
+    ax1.plot(ts_series,p_series,label='Power')
+    ax2.plot(ts_series,accumulated_pnl_series_colocation,label=f'P&L Colocation: {round(accumulated_pnl_series_colocation[-1],2)}EU')
+    ax2.plot(ts_series,accumulated_pnl_series_pv,label=f'P&L PV Only: {round(accumulated_pnl_series_pv[-1],2)}EU')
+    ax2.plot(ts_series,accumulated_pnl_series_battery_only,label=f'P&L Battery Only: {round(accumulated_pnl_series_battery_only[-1],2)}EU')
+    ax3.plot(ts_series,da_prices_series,label='DA prices')
+    
+    ax1.set_ylabel('SOC/PV/Battery Power')
+    ax2.set_ylabel('DA prices')
+    ax3.set_ylabel('P&L')
+
+    ax1.set_title(f'Single-shot optimization on {date}. Max power {str(round(p_limit,2))}, starting SOC {str(round(starting_soc,1))}')
+
+    ax3.xaxis.set_major_locator(mdates.HourLocator())
+    ax3.xaxis.set_major_formatter(mdates.DateFormatter('%H:00'))
+    ax3.xaxis.set_minor_locator(mdates.MinuteLocator(byminute=[15,30,45]))
+    # plt.show()
+    ax3.tick_params(rotation=45,labelsize=7,axis='x')
+    ax1.legend()
+    ax2.legend()
+    ax3.legend()
+
+    plt.tight_layout()
+    return fig
+def run_single_optimization_colocation(starting_soc = 0.1, p_limit = 0.1,date='2025-01-15',charge_from_grid=True,no_pv=False,etp_cost=5):
 
     def soc_calculation(model,t):
         preceding_t = [ts for ts in model.t if ts<=t]
@@ -34,8 +78,15 @@ def run_single_optimization(starting_soc = 0.1, p_limit = 0.1,date='2025-01-15',
     def cashflow_rule_only_pv(model,t):
         return model.da[t]*model.pv[t]/4
     
+    def objective_expression(model):
+    
+        # return sum(-model.da[t]*(model.p[t]-model.pv[t]) for t in model.t)-sum(model.p[t]**2 for t in model.t)*ETP_COST/4
+        return sum(-model.da[t]*(model.p[t]-model.pv[t]) for t in model.t)
     model = pyo.ConcreteModel()
     df = prepare_data.merge_prices_and_solar(date=date)
+    
+    if no_pv:
+        df['solar_production_mw']=0
 
     df = df.set_index('start_ts',drop=True)
     
@@ -66,53 +117,15 @@ def run_single_optimization(starting_soc = 0.1, p_limit = 0.1,date='2025-01-15',
 
     #Run optimization
     
-    # opt = pyo.SolverFactory('cbc')
-    opt = pyo.SolverFactory('ipopt',executable='ipopt',solver_io='nl')
-    # opt.options['output_file'] = "ipopt_log.txt"
+    opt = pyo.SolverFactory('appsi_highs')
+
     result = opt.solve(model)
     
-    ts_series =list(model.t.ordered_data())
-    soc_series = [model.soc[ts]() for ts in ts_series]
-    pv_series = [model.pv[ts] for ts in ts_series]
-    p_series = [model.p[ts]() for ts in ts_series]
-    accumulated_pnl_series_colocation = np.cumsum([model.CF_colocation[ts]() for ts in ts_series])
-    accumulated_pnl_series_pv = np.cumsum([model.CF_pv[ts]() for ts in ts_series])
-    da_prices_series = [model.da[ts] for ts in ts_series]
-
-    fig,(ax1,ax2,ax3) = plt.subplots(3,1,sharex=True)
     
-    # ax1,ax2 = axes
+    return model,result
 
-    ax1.plot(ts_series,soc_series,label='SOC')
-    ax1.plot(ts_series,pv_series,label='PV')
-    ax1.plot(ts_series,p_series,label='Power')
-    ax2.plot(ts_series,accumulated_pnl_series_colocation,label='P&L Colocation')
-    ax2.plot(ts_series,accumulated_pnl_series_pv,label='P&L PV Only')
-    ax3.plot(ts_series,da_prices_series,label='DA prices')
-    
-    ax1.set_ylabel('SOC/PV/Battery Power')
-    ax2.set_ylabel('DA prices')
-    ax3.set_ylabel('P&L')
 
-    ax1.set_title(f'Single-shot optimization on {date}. Max power {str(round(p_limit,2))}, starting SOC {str(round(starting_soc,1))}')
-
-    ax3.xaxis.set_major_locator(mdates.HourLocator())
-    ax3.xaxis.set_major_formatter(mdates.DateFormatter('%H:00'))
-    ax3.xaxis.set_minor_locator(mdates.MinuteLocator(byminute=[15,30,45]))
-    # plt.show()
-    ax3.tick_params(rotation=45,labelsize=7,axis='x')
-    ax1.legend()
-    ax2.legend()
-    ax3.legend()
-
-    plt.tight_layout()
-    
-    return fig
-
-def objective_expression(model):
-    
-    return sum(-model.da[t]*(model.p[t]-model.pv[t]) for t in model.t)-sum(model.p[t]**2 for t in model.t)*ETP_COST/4
 
 # 
 if __name__ == "__main__":
-    run_single_optimization()
+    generate_output()
