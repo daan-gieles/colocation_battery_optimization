@@ -9,7 +9,7 @@ ETP_COST = 25
 
 def run_single_optimization(starting_soc = 0.1, p_limit = 0.1,date='2025-01-15',charge_from_grid=True):
 
-    print(os.listdir('/mount/src/colocation_battery_optimization/'))
+    # print(os.listdir('/mount/src/colocation_battery_optimization/'))
     def soc_calculation(model,t):
         preceding_t = [ts for ts in model.t if ts<=t]
         return starting_soc+np.sum([model.p[t] for t in preceding_t])/4
