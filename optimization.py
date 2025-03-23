@@ -81,7 +81,7 @@ def run_single_optimization_colocation(starting_soc = 0.1, p_limit = 0.1,date='2
     
     def objective_expression(model):
     
-        return sum(-model.da[t]*(model.p[t]-model.pv[t]) for t in model.t)-sum(model.p[t]**2 for t in model.t)*etp_cost/4
+        return sum(-model.da[t]*(model.p[t]-model.pv[t]) for t in model.t)-np.sqrt(sum(model.p[t]**2 for t in model.t)*etp_cost/4)
         # return sum(-model.da[t]*(model.p[t]-model.pv[t]) for t in model.t)
     model = pyo.ConcreteModel()
     df = prepare_data.merge_prices_and_solar(date=date)
