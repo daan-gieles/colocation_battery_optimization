@@ -78,11 +78,17 @@ def run_single_optimization_colocation(starting_soc = 0.1, p_limit = 0.1,date='2
     
     def cashflow_rule_only_pv(model,t):
         return model.da[t]*model.pv[t]/4
+    def absolute_value_constraint(model,t):
+        return model.t1[t]-model.t2[t] == model.p[t]
     
     def objective_expression(model):
     
-        return sum(-model.da[t]*(model.p[t]-model.pv[t]) for t in model.t)/4-sum(model.p[t]**2 for t in model.t)*etp_cost/4
+        return sum(-model.da[t]*(model.p[t]-model.pv[t]) for t in model.t)/4-sum((model.t1[t]+model.t2[t]) for t in model.t)*etp_cost/4
         # return sum(-model.da[t]*(model.p[t]-model.pv[t]) for t in model.t)
+
+    
+
+
     model = pyo.ConcreteModel()
     df = prepare_data.merge_prices_and_solar(date=date)
     
@@ -110,16 +116,23 @@ def run_single_optimization_colocation(starting_soc = 0.1, p_limit = 0.1,date='2
     model.constraint_soc_lower = pyo.Constraint(model.t,expr=constraint_soc_lower)
     model.constraint_soc_upper = pyo.Constraint(model.t,expr=constraint_soc_upper)
 
+    #Trick to get the absolute value to work in the objective function. Based on https://math.stackexchange.com/questions/432003/converting-absolute-value-program-into-linear-program
+    model.t1 = pyo.Var(model.t,within=pyo.NonNegativeReals,initialize=0)    
+    model.t2 = pyo.Var(model.t,within=pyo.NonNegativeReals,initialize=0)    
+    model.abs_value_constraint = pyo.Constraint(model.t,expr=absolute_value_constraint)
+
     #Objective
     model.OBJ = pyo.Objective(rule=objective_expression,sense=pyo.maximize)
     
     model.CF_colocation = pyo.Expression(model.t,expr=cashflow_rule_colocation)
     model.CF_pv = pyo.Expression(model.t,expr=cashflow_rule_only_pv)
 
+    
+
     #Run optimization
     
-    # opt = pyo.SolverFactory('appsi_highs')
-    opt = pyo.SolverFactory('gurobi')
+    opt = pyo.SolverFactory('appsi_highs')
+    # opt = pyo.SolverFactory('gurobi')
 
     result = opt.solve(model)
     return model,result
