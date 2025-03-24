@@ -31,7 +31,7 @@ def main():
     
     click = st.button('Run optimization')
     if click:
-        exp = st.expander('Explanation of figures',icon='ℹ️')
+        exp = st.expander('Explanation of figures')
         with exp:
             st.write('From top to bottom:')
             st.markdown("- The first figure shows the State-of-charge (SOC), PV production (PV), the battery power (Power), and the PV production flowing into the batter (PV to battery)")
