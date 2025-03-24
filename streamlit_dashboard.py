@@ -37,7 +37,7 @@ def main():
             st.markdown("- The first figure shows the State-of-charge (SOC), PV production (PV), the battery power (Power), and the PV production flowing into the batter (PV to battery)")
             st.markdown("- The second figure shows the cumulative P&L for the colocation project, the cumulative P&L that would have been realized with only the PV, and the cumulative P&L that would have been realized with only the specified battery. This P&L does not yet account for the tax- grid-fee- or slippage-related benefits.")
             st.markdown("- The third figure shows the DA prices which were used in the optimization")
-            st.markdown("- The fourth figure indicates the accumulated benefit that arises from not having to buy power on an illiquid market by flowing PV to the battery. This KPI is calculated based on the passed average bid-ask spread")
+            st.markdown("- The fourth figure indicates the accumulated benefit that arises from not having to buy power on an illiquid market by flowing PV to the battery. This KPI is calculated based on the passed average bid-ask spread. The benit originates from PV and the battery 'meeting in the middle' instead of PV selling at a lower price than what the battery would buy at.")
             
             
         fig = optimization.generate_output(starting_soc=starting_soc,p_limit=max_power,charge_from_grid=charge_from_grid,date=date.strftime('%Y-%m-%d'),etp_cost=etp_cost,average_bid_ask_spread=average_bid_ask_spread)
