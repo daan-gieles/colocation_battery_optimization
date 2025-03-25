@@ -2,7 +2,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def estimate_solar_production(date='2025-01-05'):
-    
+    """
+    Prepares solar production data from the CSV file in the repo
+    """
     df = pd.read_csv('example_data/solar/solar_generation_germany.csv')
     
     df['start_ts'] = pd.to_datetime(df['MTU'].str.split(' - ').str[0],format='%d.%m.%Y %H:%M')
@@ -18,6 +20,10 @@ def estimate_solar_production(date='2025-01-05'):
     return df
 
 def prepare_da_prices(date='2025-01-09'):
+    """
+    Prepares DA price data from the CSV file in the repo
+    """
+
     df = pd.read_csv('example_data/prices/da_prices_2025.csv')
     df = df[df['Sequence']=='Sequence 1']
     
@@ -30,6 +36,9 @@ def prepare_da_prices(date='2025-01-09'):
     return df
 
 def merge_prices_and_solar(date='2025-01-15'):
+    """
+    Merge solar and price data for a certain date
+    """
     df_prices = prepare_da_prices(date=date)
     df_solar = estimate_solar_production(date=date)
     df_merged = pd.merge(df_prices,df_solar,on='start_ts',how='inner')
