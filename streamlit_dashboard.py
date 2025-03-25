@@ -15,7 +15,7 @@ def main():
             </style>
             ''', unsafe_allow_html=True)
     
-    st.title('Optimization of co-located 1MW solar plant with a 1MWh battery')
+    st.title('Trading optimization of solar plant with a battery')
     with st.expander("See explanation"):
         st.markdown("- This is a hobby project in which I try to estimate the combined returns of a PV+battery (1MW/1MWh) combination")
         st.markdown("- You can select a battery power level, a starting state-of-charge (SOC) and the option whether the battery is allowed to charge from the grid instead or solely from the PV")
